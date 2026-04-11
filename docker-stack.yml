@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  user-service:
+    image: user-service:latest
+    build: ./user-service
+    networks:
+      - micro-net
+    deploy:
+      replicas: 2
+
+  order-service:
+    image: order-service:latest
+    build: ./order-service
+    networks:
+      - micro-net
+    depends_on:
+      - user-service
+    deploy:
+      replicas: 2
+
+  nginx:
+    image: nginx-custom:latest
+    build: ./nginx
+    ports:
+      - "80:80"
+    networks:
+      - micro-net
+    deploy:
+      replicas: 1
+
+networks:
+  micro-net:
+    driver: overlay
